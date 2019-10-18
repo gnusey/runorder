@@ -46,7 +46,7 @@ func calculate(m map[string][]string) (r [][]string) {
 func cp(m map[string][]string) map[string][]string {
 	c := make(map[string][]string)
 	for k, v := range m {
-		c[k] = v
+		c[k] = append([]string{}, v...)
 	}
 	return c
 }
