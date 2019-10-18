@@ -7,7 +7,7 @@ func removeAtIndex(s []string, i int) []string {
 	return append(s[:i], s[i+1:]...)
 }
 
-// deleteReference removes all references to value `ref` in `m`.
+// deleteReference removes all references to value `refs` in `m`.
 func deleteReference(m map[string][]string, refs ...string) {
 	for k, v := range m {
 		t := v

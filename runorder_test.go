@@ -198,14 +198,14 @@ func Test_checkCircularReference(t *testing.T) {
 		inMap     map[string][]string
 		shouldErr bool
 	}{
-		"Test with circular reference": {
+		"Test without circular reference": {
 			inMap: map[string][]string{
 				"a": []string{"b"},
 				"c": []string{},
 			},
 			shouldErr: false,
 		},
-		"Test without circular reference": {
+		"Test with circular reference": {
 			inMap: map[string][]string{
 				"a": []string{"b"},
 				"b": []string{"a"},
