@@ -79,6 +79,18 @@ func Test_deleteReference(t *testing.T) {
 			ref:   []string{"d"},
 			exp:   map[string][]string{},
 		},
+		"Test deleteReference with multiple references": {
+			inMap: map[string][]string{
+				"a": []string{"b"},
+				"b": []string{"c", "c"},
+				"c": []string{},
+			},
+			ref: []string{"c"},
+			exp: map[string][]string{
+				"a": []string{"b"},
+				"b": []string{},
+			},
+		},
 	}
 
 	for title, test := range tests {
@@ -261,6 +273,18 @@ func Test_New(t *testing.T) {
 			copy:      false,
 			exp:       nil,
 			shouldErr: true,
+		},
+		"Test New with multiple reference": {
+			inMap: map[string][]string{
+				"a": []string{"b", "b"},
+				"b": []string{},
+			},
+			copy: false,
+			exp: [][]string{
+				[]string{"b"},
+				[]string{"a"},
+			},
+			shouldErr: false,
 		},
 	}
 

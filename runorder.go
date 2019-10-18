@@ -12,8 +12,7 @@ func deleteReference(m map[string][]string, refs ...string) {
 	for k, v := range m {
 		t := v
 		for _, ref := range refs {
-			i := indexOf(v, ref)
-			if i > -1 {
+			for i := indexOf(t, ref); i > -1; i = indexOf(t, ref) {
 				t = removeAtIndex(t, i)
 			}
 		}
