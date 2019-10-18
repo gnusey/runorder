@@ -74,10 +74,10 @@ func checkCircularReference(m map[string][]string) error {
 	return nil
 }
 
-// New returns the run order. Anything that can run concurrently is stored in
-// the same slice. The function will mutate the map passed into it. If this is
+// Calculate returns the run order. Anything that can run concurrently is stored
+// in the same slice. The function will mutate the map passed into it. If this is
 // not acceptable set `c` to true to create a copy of the map.
-func New(m map[string][]string, c bool) ([][]string, error) {
+func Calculate(m map[string][]string, c bool) ([][]string, error) {
 	err := checkCircularReference(m)
 	if err != nil {
 		return nil, err
