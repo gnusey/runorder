@@ -23,13 +23,11 @@ func main() {
 		"c": []string{},
 		"d": []string{},
 	}
-    
-    o, err := runorder.New(m, false)
+	o, err := runorder.New(m, false)
 	if err != nil {
 		log.Fatal("F*ck!", err)
 	}
-    
-    fmt.Println(o)
+	fmt.Println(o)
 	// Output:
 	// [[c d] [b] [a]]
 }

@@ -79,6 +79,18 @@ func Test_deleteReference(t *testing.T) {
 			ref:   []string{"d"},
 			exp:   map[string][]string{},
 		},
+		"Test deleteReference with multiple references": {
+			inMap: map[string][]string{
+				"a": []string{"b"},
+				"b": []string{"c", "c"},
+				"c": []string{},
+			},
+			ref: []string{"c"},
+			exp: map[string][]string{
+				"a": []string{"b"},
+				"b": []string{},
+			},
+		},
 	}
 
 	for title, test := range tests {
@@ -198,14 +210,14 @@ func Test_checkCircularReference(t *testing.T) {
 		inMap     map[string][]string
 		shouldErr bool
 	}{
-		"Test with circular reference": {
+		"Test without circular reference": {
 			inMap: map[string][]string{
 				"a": []string{"b"},
 				"c": []string{},
 			},
 			shouldErr: false,
 		},
-		"Test without circular reference": {
+		"Test with circular reference": {
 			inMap: map[string][]string{
 				"a": []string{"b"},
 				"b": []string{"a"},
@@ -222,14 +234,14 @@ func Test_checkCircularReference(t *testing.T) {
 	}
 }
 
-func Test_New(t *testing.T) {
+func Test_Calculate(t *testing.T) {
 	tests := map[string]struct {
 		inMap     map[string][]string
 		copy      bool
 		exp       [][]string
 		shouldErr bool
 	}{
-		"Test New": {
+		"Test Calculate": {
 			inMap: map[string][]string{
 				"a": []string{"b"},
 				"b": []string{},
@@ -241,7 +253,7 @@ func Test_New(t *testing.T) {
 			},
 			shouldErr: false,
 		},
-		"Test New with copy": {
+		"Test Calculate with copy": {
 			inMap: map[string][]string{
 				"a": []string{"b"},
 				"b": []string{},
@@ -253,7 +265,7 @@ func Test_New(t *testing.T) {
 			},
 			shouldErr: false,
 		},
-		"Test New with circular reference": {
+		"Test Calculate with circular reference": {
 			inMap: map[string][]string{
 				"a": []string{"b"},
 				"b": []string{"a"},
@@ -262,11 +274,23 @@ func Test_New(t *testing.T) {
 			exp:       nil,
 			shouldErr: true,
 		},
+		"Test Calculate with multiple reference": {
+			inMap: map[string][]string{
+				"a": []string{"b", "b"},
+				"b": []string{},
+			},
+			copy: false,
+			exp: [][]string{
+				[]string{"b"},
+				[]string{"a"},
+			},
+			shouldErr: false,
+		},
 	}
 
 	for title, test := range tests {
 		c := cp(test.inMap)
-		res, err := New(test.inMap, test.copy)
+		res, err := Calculate(test.inMap, test.copy)
 		if !compare(t, res, test.exp) || (err != nil && !test.shouldErr) || (test.copy && !reflect.DeepEqual(test.inMap, c)) {
 			t.Fatalf("%s failed, expected %+v, got %+v, should error %t, error %s, use copy %t, original %+v", title, test.exp, res, test.shouldErr, err, test.copy, test.inMap)
 		}

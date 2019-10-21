@@ -7,13 +7,12 @@ func removeAtIndex(s []string, i int) []string {
 	return append(s[:i], s[i+1:]...)
 }
 
-// deleteReference removes all references to value `ref` in `m`.
+// deleteReference removes all references to value `refs` in `m`.
 func deleteReference(m map[string][]string, refs ...string) {
 	for k, v := range m {
 		t := v
 		for _, ref := range refs {
-			i := indexOf(v, ref)
-			if i > -1 {
+			for i := indexOf(t, ref); i > -1; i = indexOf(t, ref) {
 				t = removeAtIndex(t, i)
 			}
 		}
@@ -46,7 +45,7 @@ func calculate(m map[string][]string) (r [][]string) {
 func cp(m map[string][]string) map[string][]string {
 	c := make(map[string][]string)
 	for k, v := range m {
-		c[k] = v
+		c[k] = append([]string{}, v...)
 	}
 	return c
 }
@@ -75,10 +74,10 @@ func checkCircularReference(m map[string][]string) error {
 	return nil
 }
 
-// New returns the run order. Anything that can run concurrently is stored in
-// the same slice. The function will mutate the map passed into it. If this is
+// Calculate returns the run order. Anything that can run concurrently is stored
+// in the same slice. The function will mutate the map passed into it. If this is
 // not acceptable set `c` to true to create a copy of the map.
-func New(m map[string][]string, c bool) ([][]string, error) {
+func Calculate(m map[string][]string, c bool) ([][]string, error) {
 	err := checkCircularReference(m)
 	if err != nil {
 		return nil, err
