@@ -157,6 +157,15 @@ func Test_calculate(t *testing.T) {
 			inMap: map[string][]string{},
 			exp:   [][]string{},
 		},
+		"Test calculate D": {
+			inMap: map[string][]string{
+				"a": []string{"b"},
+			},
+			exp: [][]string{
+				[]string{"b"},
+				[]string{"a"},
+			},
+		},
 	}
 
 	for title, test := range tests {
