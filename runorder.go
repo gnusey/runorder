@@ -35,6 +35,16 @@ func calculate(m map[string][]string) (r [][]string) {
 			n = append(n, k)
 		}
 	}
+	if len(n) == 0 {
+		for _, v := range m {
+			for _, r := range v {
+				if m[r] == nil || len(m[r]) == 0 {
+					n = append(n, r)
+				}
+			}
+		}
+	}
+
 	deleteReference(m, n...)
 	r = append(r, n)
 
