@@ -62,6 +62,7 @@ func cp(m map[string][]string) map[string][]string {
 	for k, v := range m {
 		c[k] = append([]string{}, v...)
 	}
+
 	return c
 }
 
@@ -73,6 +74,7 @@ func indexOf(s []string, t string) int {
 			return i
 		}
 	}
+
 	return -1
 }
 
@@ -90,6 +92,7 @@ func checkCircularReference(m map[string][]string) error {
 			}
 		}
 	}
+
 	return nil
 }
 
@@ -101,6 +104,7 @@ func Calculate(m map[string][]string, c bool) ([][]string, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	if c {
 		return calculate(cp(m)), nil
 	}
