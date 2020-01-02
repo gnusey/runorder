@@ -2,7 +2,7 @@
 
 ### Overview
 
-Go package for determining the concurrent run order of jobs defined in a map of string slices.
+Go package for determining the concurrent run order of jobs defined in a map of string slices; where the keys of the map represent the jobs and the values represent the jobs dependencies.
 
 ### Usage
 
