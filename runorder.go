@@ -1,6 +1,6 @@
 package runorder
 
-import "fmt"
+import "github.com/pkg/errors"
 
 // removeAtIndex removes an element at a specific index from a slice.
 func removeAtIndex(s []string, i int) []string {
@@ -76,13 +76,17 @@ func indexOf(s []string, t string) int {
 	return -1
 }
 
+// ErrCircularReference represents a circular reference, where two elements in the map
+// are mutually dependent on one another.
+var ErrCircularReference = errors.New("error: circular reference")
+
 // checkCircularReference checks for any circular references (jobs that mutually depend
 // on one another) and returns an error if one is found.
 func checkCircularReference(m map[string][]string) error {
 	for k, v := range m {
 		for _, r := range v {
 			if indexOf(m[r], k) > -1 {
-				return fmt.Errorf("error: circular reference found between %s and %s", k, r)
+				return errors.WithMessagef(ErrCircularReference, "between %s and %s", k, r)
 			}
 		}
 	}
