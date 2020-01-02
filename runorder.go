@@ -1,6 +1,9 @@
 package runorder
 
-import "github.com/pkg/errors"
+import (
+	"errors"
+	"fmt"
+)
 
 // removeAtIndex removes an element at a specific index from a slice.
 func removeAtIndex(s []string, i int) []string {
@@ -103,7 +106,7 @@ func checkCircularReference(m map[string][]string) error {
 	for k, v := range m {
 		for _, r := range v {
 			if includes(m[r], k) {
-				return errors.WithMessagef(ErrCircularReference, "between %s and %s", k, r)
+				return fmt.Errorf("%s, between %s and %s", ErrCircularReference, k, r)
 			}
 		}
 	}
