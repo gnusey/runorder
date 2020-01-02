@@ -1,10 +1,19 @@
 package runorder
 
-import "fmt"
+import "github.com/pkg/errors"
 
 // removeAtIndex removes an element at a specific index from a slice.
 func removeAtIndex(s []string, i int) []string {
 	return append(s[:i], s[i+1:]...)
+}
+
+// removeAll removes all occurrences of an element from a slice.
+func removeAll(s []string, t string) []string {
+	for i := indexOf(s, t); i > notFound; i = indexOf(s, t) {
+		s = removeAtIndex(s, i)
+	}
+
+	return s
 }
 
 // deleteReference removes all references to value `refs` in `m`.
@@ -12,15 +21,18 @@ func deleteReference(m map[string][]string, refs ...string) {
 	for k, v := range m {
 		t := v
 		for _, ref := range refs {
-			for i := indexOf(t, ref); i > -1; i = indexOf(t, ref) {
-				t = removeAtIndex(t, i)
-			}
+			t = removeAll(t, ref)
 		}
 		m[k] = t
 	}
 	for _, ref := range refs {
 		delete(m, ref)
 	}
+}
+
+// isEmpty is a helper function for checking if a string slice is empty.
+func isEmpty(s []string) bool {
+	return s == nil || len(s) == 0
 }
 
 // calculate calculates the run order.
@@ -31,14 +43,14 @@ func calculate(m map[string][]string) (r [][]string) {
 
 	var n []string
 	for k, v := range m {
-		if v == nil || len(v) == 0 {
+		if isEmpty(v) {
 			n = append(n, k)
 		}
 	}
 	if len(n) == 0 {
 		for _, v := range m {
 			for _, r := range v {
-				if m[r] == nil || len(m[r]) == 0 {
+				if isEmpty(m[r]) {
 					n = append(n, r)
 				}
 			}
@@ -57,30 +69,45 @@ func cp(m map[string][]string) map[string][]string {
 	for k, v := range m {
 		c[k] = append([]string{}, v...)
 	}
+
 	return c
 }
 
+// notFound represents the index of an element not present in a slice.
+const notFound int = -1
+
 // indexOf returns the index of an element in a slice. If the element does not
-// exist the function returns -1.
+// exist the function returns `notFound`.
 func indexOf(s []string, t string) int {
 	for i, v := range s {
 		if v == t {
 			return i
 		}
 	}
-	return -1
+
+	return notFound
 }
+
+// includes is a helper function for checking if an element is present in a slice.
+func includes(s []string, t string) bool {
+	return indexOf(s, t) > notFound
+}
+
+// ErrCircularReference represents a circular reference, where two elements in the map
+// are mutually dependent on one another.
+var ErrCircularReference = errors.New("error: circular reference")
 
 // checkCircularReference checks for any circular references (jobs that mutually depend
 // on one another) and returns an error if one is found.
 func checkCircularReference(m map[string][]string) error {
 	for k, v := range m {
 		for _, r := range v {
-			if indexOf(m[r], k) > -1 {
-				return fmt.Errorf("error: circular reference found between %s and %s", k, r)
+			if includes(m[r], k) {
+				return errors.WithMessagef(ErrCircularReference, "between %s and %s", k, r)
 			}
 		}
 	}
+
 	return nil
 }
 
@@ -92,6 +119,7 @@ func Calculate(m map[string][]string, c bool) ([][]string, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	if c {
 		return calculate(cp(m)), nil
 	}
@@ -103,5 +131,6 @@ func Reverse(r [][]string) (reversed [][]string) {
 	for i := len(r) - 1; i >= 0; i-- {
 		reversed = append(reversed, r[i])
 	}
+
 	return
 }
