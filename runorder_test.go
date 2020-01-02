@@ -33,12 +33,12 @@ func Test_removeAtIndex(t *testing.T) {
 
 func Test_deleteReference(t *testing.T) {
 	tests := map[string]struct {
-		inMap map[string][]string
-		ref   []string
-		exp   map[string][]string
+		m   map[string][]string
+		ref []string
+		exp map[string][]string
 	}{
 		"Test deleteReference reference not in map": {
-			inMap: map[string][]string{
+			m: map[string][]string{
 				"a": []string{"b"},
 				"b": []string{"c"},
 				"c": []string{},
@@ -51,7 +51,7 @@ func Test_deleteReference(t *testing.T) {
 			},
 		},
 		"Test deleteReference": {
-			inMap: map[string][]string{
+			m: map[string][]string{
 				"a": []string{"b"},
 				"b": []string{"c"},
 				"c": []string{},
@@ -63,7 +63,7 @@ func Test_deleteReference(t *testing.T) {
 			},
 		},
 		"Test deleteReference multiple": {
-			inMap: map[string][]string{
+			m: map[string][]string{
 				"a": []string{"b"},
 				"b": []string{"c"},
 				"c": []string{},
@@ -74,12 +74,12 @@ func Test_deleteReference(t *testing.T) {
 			},
 		},
 		"Test deleteReference reference empty map": {
-			inMap: map[string][]string{},
-			ref:   []string{"d"},
-			exp:   map[string][]string{},
+			m:   map[string][]string{},
+			ref: []string{"d"},
+			exp: map[string][]string{},
 		},
 		"Test deleteReference with multiple references": {
-			inMap: map[string][]string{
+			m: map[string][]string{
 				"a": []string{"b"},
 				"b": []string{"c", "c"},
 				"c": []string{},
@@ -93,8 +93,8 @@ func Test_deleteReference(t *testing.T) {
 	}
 
 	for title, test := range tests {
-		deleteReference(test.inMap, test.ref...)
-		if res := test.inMap; !reflect.DeepEqual(res, test.exp) {
+		deleteReference(test.m, test.ref...)
+		if res := test.m; !reflect.DeepEqual(res, test.exp) {
 			t.Fatalf("%s failed, expected %+v, got %+v", title, test.exp, res)
 		}
 	}
@@ -120,11 +120,11 @@ func compare(t *testing.T, a, b [][]string) bool {
 
 func Test_calculate(t *testing.T) {
 	tests := map[string]struct {
-		inMap map[string][]string
-		exp   [][]string
+		m   map[string][]string
+		exp [][]string
 	}{
 		"Test calculate A": {
-			inMap: map[string][]string{
+			m: map[string][]string{
 				"a": []string{"b"},
 				"b": []string{"c"},
 				"c": []string{},
@@ -136,7 +136,7 @@ func Test_calculate(t *testing.T) {
 			},
 		},
 		"Test calculate B": {
-			inMap: map[string][]string{
+			m: map[string][]string{
 				"a": []string{"b"},
 				"b": []string{"c", "d", "e"},
 				"c": []string{},
@@ -152,11 +152,11 @@ func Test_calculate(t *testing.T) {
 			},
 		},
 		"Test calculate C": {
-			inMap: map[string][]string{},
-			exp:   [][]string{},
+			m:   map[string][]string{},
+			exp: [][]string{},
 		},
 		"Test calculate D": {
-			inMap: map[string][]string{
+			m: map[string][]string{
 				"a": []string{"b"},
 			},
 			exp: [][]string{
@@ -167,7 +167,7 @@ func Test_calculate(t *testing.T) {
 	}
 
 	for title, test := range tests {
-		if res := calculate(test.inMap); !compare(t, res, test.exp) {
+		if res := calculate(test.m); !compare(t, res, test.exp) {
 			t.Fatalf("%s failed, expected %s, got %s", title, test.exp, res)
 		}
 	}
@@ -210,18 +210,18 @@ func Test_indexOf(t *testing.T) {
 
 func Test_checkCircularReference(t *testing.T) {
 	tests := map[string]struct {
-		inMap map[string][]string
-		err   bool
+		m   map[string][]string
+		err bool
 	}{
 		"Test without circular reference": {
-			inMap: map[string][]string{
+			m: map[string][]string{
 				"a": []string{"b"},
 				"c": []string{},
 			},
 			err: false,
 		},
 		"Test with circular reference": {
-			inMap: map[string][]string{
+			m: map[string][]string{
 				"a": []string{"b"},
 				"b": []string{"a"},
 			},
@@ -230,7 +230,7 @@ func Test_checkCircularReference(t *testing.T) {
 	}
 
 	for title, test := range tests {
-		if err := checkCircularReference(test.inMap); (err != nil) != test.err {
+		if err := checkCircularReference(test.m); (err != nil) != test.err {
 			t.Fatalf("%s failed, expected error %t, error %s", title, test.err, err)
 		}
 	}
@@ -238,13 +238,13 @@ func Test_checkCircularReference(t *testing.T) {
 
 func Test_Calculate(t *testing.T) {
 	tests := map[string]struct {
-		inMap map[string][]string
-		copy  bool
-		exp   [][]string
-		err   bool
+		m    map[string][]string
+		copy bool
+		exp  [][]string
+		err  bool
 	}{
 		"Test Calculate": {
-			inMap: map[string][]string{
+			m: map[string][]string{
 				"a": []string{"b"},
 				"b": []string{},
 			},
@@ -256,7 +256,7 @@ func Test_Calculate(t *testing.T) {
 			err: false,
 		},
 		"Test Calculate with copy": {
-			inMap: map[string][]string{
+			m: map[string][]string{
 				"a": []string{"b"},
 				"b": []string{},
 			},
@@ -268,7 +268,7 @@ func Test_Calculate(t *testing.T) {
 			err: false,
 		},
 		"Test Calculate with circular reference": {
-			inMap: map[string][]string{
+			m: map[string][]string{
 				"a": []string{"b"},
 				"b": []string{"a"},
 			},
@@ -277,7 +277,7 @@ func Test_Calculate(t *testing.T) {
 			err:  true,
 		},
 		"Test Calculate with multiple reference": {
-			inMap: map[string][]string{
+			m: map[string][]string{
 				"a": []string{"b", "b"},
 				"b": []string{},
 			},
@@ -291,9 +291,9 @@ func Test_Calculate(t *testing.T) {
 	}
 
 	for title, test := range tests {
-		c := cp(test.inMap)
-		if res, err := Calculate(test.inMap, test.copy); !compare(t, res, test.exp) || (err != nil) != test.err || (test.copy && !reflect.DeepEqual(test.inMap, c)) {
-			t.Fatalf("%s failed, expected %+v, got %+v, should error %t, error %s, use copy %t, original %+v", title, test.exp, res, test.err, err, test.copy, test.inMap)
+		c := cp(test.m)
+		if res, err := Calculate(test.m, test.copy); !compare(t, res, test.exp) || (err != nil) != test.err || (test.copy && !reflect.DeepEqual(test.m, c)) {
+			t.Fatalf("%s failed, expected %+v, got %+v, should error %t, error %s, use copy %t, original %+v", title, test.exp, res, test.err, err, test.copy, test.m)
 		}
 	}
 }

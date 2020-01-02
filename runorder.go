@@ -7,14 +7,21 @@ func removeAtIndex(s []string, i int) []string {
 	return append(s[:i], s[i+1:]...)
 }
 
+// removeAll removes all occurrences of an element from a slice.
+func removeAll(s []string, t string) []string {
+	for i := indexOf(s, t); i > notFound; i = indexOf(s, t) {
+		s = removeAtIndex(s, i)
+	}
+
+	return s
+}
+
 // deleteReference removes all references to value `refs` in `m`.
 func deleteReference(m map[string][]string, refs ...string) {
 	for k, v := range m {
 		t := v
 		for _, ref := range refs {
-			for i := indexOf(t, ref); i > -1; i = indexOf(t, ref) {
-				t = removeAtIndex(t, i)
-			}
+			t = removeAll(t, ref)
 		}
 		m[k] = t
 	}
@@ -66,8 +73,11 @@ func cp(m map[string][]string) map[string][]string {
 	return c
 }
 
+// notFound represents the index of an element not present in a slice.
+const notFound int = -1
+
 // indexOf returns the index of an element in a slice. If the element does not
-// exist the function returns -1.
+// exist the function returns `notFound`.
 func indexOf(s []string, t string) int {
 	for i, v := range s {
 		if v == t {
@@ -75,7 +85,12 @@ func indexOf(s []string, t string) int {
 		}
 	}
 
-	return -1
+	return notFound
+}
+
+// includes is a helper function for checking if an element is present in a slice.
+func includes(s []string, t string) bool {
+	return indexOf(s, t) > notFound
 }
 
 // ErrCircularReference represents a circular reference, where two elements in the map
@@ -87,7 +102,7 @@ var ErrCircularReference = errors.New("error: circular reference")
 func checkCircularReference(m map[string][]string) error {
 	for k, v := range m {
 		for _, r := range v {
-			if indexOf(m[r], k) > -1 {
+			if includes(m[r], k) {
 				return errors.WithMessagef(ErrCircularReference, "between %s and %s", k, r)
 			}
 		}
@@ -116,5 +131,6 @@ func Reverse(r [][]string) (reversed [][]string) {
 	for i := len(r) - 1; i >= 0; i-- {
 		reversed = append(reversed, r[i])
 	}
+
 	return
 }
