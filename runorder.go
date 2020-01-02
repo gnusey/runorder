@@ -23,6 +23,11 @@ func deleteReference(m map[string][]string, refs ...string) {
 	}
 }
 
+// isEmpty is a helper function for checking if a string slice is empty.
+func isEmpty(s []string) bool {
+	return s == nil || len(s) == 0
+}
+
 // calculate calculates the run order.
 func calculate(m map[string][]string) (r [][]string) {
 	if len(m) == 0 {
@@ -31,14 +36,14 @@ func calculate(m map[string][]string) (r [][]string) {
 
 	var n []string
 	for k, v := range m {
-		if v == nil || len(v) == 0 {
+		if isEmpty(v) {
 			n = append(n, k)
 		}
 	}
 	if len(n) == 0 {
 		for _, v := range m {
 			for _, r := range v {
-				if m[r] == nil || len(m[r]) == 0 {
+				if isEmpty(m[r]) {
 					n = append(n, r)
 				}
 			}
